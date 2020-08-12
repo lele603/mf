@@ -3,7 +3,28 @@ import yaml
 
 from code.calc import Calcu
 
-with open("./datas/cal.yaml", encoding='utf-8') as f:
+path="./datas/caltest.yaml"
+
+@pytest.fixture(scope="module")
+def start():
+    print("开始计算")
+    calc = Calcu()
+    yield calc
+    print("结束计算")
+
+@pytest.fixture(scope="module")
+def setenv(cmdoption):
+    print(cmdoption)
+    global path
+    if cmdoption == 'test':
+        path = "./datas/caltest.yaml"
+    elif cmdoption == 'dev':
+        path = "./datas/caldev.yaml"
+    elif cmdoption == 'st':
+        path = "./datas/calst.yaml"
+    return path
+
+with open(path, encoding='utf-8') as f:
     datas = yaml.safe_load(f)
     adddata = datas['add']['adddata']
     addid = datas['add']['addid']
@@ -13,16 +34,6 @@ with open("./datas/cal.yaml", encoding='utf-8') as f:
     mulid = datas['mul']['mulid']
     divdata = datas['div']['divdata']
     divid = datas['div']['divid']
-
-
-@pytest.fixture(scope="module")
-def start():
-    print("开始计算")
-    calc = Calcu()
-    yield calc
-    print("结束计算")
-
-
 @pytest.fixture(params=adddata, ids=addid)
 def getadddata(request):
     data = request.param
@@ -45,3 +56,14 @@ def getmuldata(request):
 def getdivdata(request):
     data = request.param
     return data
+
+def pytest_addoption(parser):
+    mygroup = parser.getgroup("hogwarts")
+    mygroup.addoption("--env",
+                      default="test",
+                      dest="env",
+                      help="set your run env")
+
+@pytest.fixture(scope="session")
+def cmdoption(request):
+    return request.config.getoption("--env", default="test")
