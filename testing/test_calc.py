@@ -3,7 +3,7 @@ import yaml
 
 from code.calc import Calcu
 
-with open("./datas/cal.yaml", encoding='utf-8') as f:
+with open("../testing2/datas/caltest.yaml", encoding='utf-8') as f:
     datas = yaml.safe_load(f)
     adddata = datas['add']['adddata']
     addid = datas['add']['addid']

@@ -3,7 +3,8 @@ import yaml
 
 from code.calc import Calcu
 
-path="./datas/caltest.yaml"
+path = "./datas/caltest.yaml"
+
 
 @pytest.fixture(scope="module")
 def start():
@@ -11,6 +12,7 @@ def start():
     calc = Calcu()
     yield calc
     print("结束计算")
+
 
 @pytest.fixture(scope="module")
 def setenv(cmdoption):
@@ -24,6 +26,7 @@ def setenv(cmdoption):
         path = "./datas/calst.yaml"
     return path
 
+
 with open(path, encoding='utf-8') as f:
     datas = yaml.safe_load(f)
     adddata = datas['add']['adddata']
@@ -34,6 +37,8 @@ with open(path, encoding='utf-8') as f:
     mulid = datas['mul']['mulid']
     divdata = datas['div']['divdata']
     divid = datas['div']['divid']
+
+
 @pytest.fixture(params=adddata, ids=addid)
 def getadddata(request):
     data = request.param
@@ -57,12 +62,14 @@ def getdivdata(request):
     data = request.param
     return data
 
+
 def pytest_addoption(parser):
     mygroup = parser.getgroup("hogwarts")
     mygroup.addoption("--env",
                       default="test",
                       dest="env",
                       help="set your run env")
+
 
 @pytest.fixture(scope="session")
 def cmdoption(request):
